@@ -1,0 +1,11 @@
+symfony/.env
+symfony/.env.*
+!symfony/.env.example
+!symfony/.env.dist
+!symfony/.env.*.dist
+symfony/config/jwt/*.pem
+symfony/vendor/
+symfony/var/
+symfony/.phpunit.cache/
+symfony/public/bundles/
+symfony/public/uploads/

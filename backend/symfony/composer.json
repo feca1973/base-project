@@ -1,0 +1,137 @@
+{
+    "name": "base-project/backend",
+    "description": "Symfony backend for the Base Project website.",
+    "type": "project",
+    "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.4",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/doctrine-bundle": "^2.19",
+        "doctrine/doctrine-fixtures-bundle": "^4.3",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
+        "doctrine/orm": "^3.6.8",
+        "elasticsearch/elasticsearch": "^8.19",
+        "friendsofsymfony/rest-bundle": "^3.9",
+        "lexik/jwt-authentication-bundle": "^3.2",
+        "nelmio/api-doc-bundle": "^4.38.7",
+        "phpdocumentor/reflection-docblock": "^5.6.7",
+        "phpstan/phpdoc-parser": "^2.3.3",
+        "ramsey/uuid": "^4.9.3",
+        "snc/redis-bundle": "^4.13.1",
+        "symfony/cache": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/dotenv": "7.4.*",
+        "symfony/filesystem": "7.4.*",
+        "symfony/flex": "^2.11",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/http-client": "7.4.*",
+        "symfony/mailer": "7.4.*",
+        "symfony/messenger": "7.4.*",
+        "symfony/notifier": "7.4.*",
+        "symfony/property-access": "7.4.*",
+        "symfony/property-info": "7.4.*",
+        "symfony/rate-limiter": "7.4.*",
+        "symfony/redis-messenger": "7.4.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/security-bundle": "7.4.*",
+        "symfony/serializer": "7.4.*",
+        "symfony/translation": "7.4.*",
+        "symfony/validator": "7.4.*",
+        "symfony/yaml": "7.4.*"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "phpmd/phpmd": "^2.15",
+        "phpstan/phpstan": "^2.2.9",
+        "phpunit/phpunit": "^10.5.64",
+        "squizlabs/php_codesniffer": "^3.13.6",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/maker-bundle": "^1.67.0",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/var-dumper": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "bump-after-update": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*",
+        "symfony/polyfill-php84": "*"
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "static-code-analyze": "@qa",
+        "qa:php-lint": "sh -lc 'find src tests migrations -name \"*.php\" -print0 | xargs -0 -n1 php -l'",
+        "qa:cbf": "vendor/bin/phpcbf --standard=phpcs.xml.dist src tests migrations",
+        "qa:phpcs": "vendor/bin/phpcs --standard=phpcs.xml.dist src tests migrations",
+        "qa:phpstan": "vendor/bin/phpstan analyse src --level=1 --memory-limit=1G",
+        "qa:phpmd:cleancode": "php -d error_reporting=8191 vendor/bin/phpmd src text cleancode --exclude Entity,Kernel.php",
+        "qa:phpmd:codesize": "php -d error_reporting=8191 vendor/bin/phpmd src text codesize --exclude Entity,Kernel.php",
+        "qa:phpmd:controversial": "php -d error_reporting=8191 vendor/bin/phpmd src text controversial --exclude Entity,Kernel.php",
+        "qa:phpmd:design": "php -d error_reporting=8191 vendor/bin/phpmd src text design --exclude Entity,Kernel.php",
+        "qa:phpmd:unusedcode": "php -d error_reporting=8191 vendor/bin/phpmd src text unusedcode --exclude Entity,Kernel.php",
+        "qa": [
+            "@qa:php-lint",
+            "@qa:cbf",
+            "@qa:phpstan",
+            "@qa:phpcs",
+            "@qa:phpmd:cleancode",
+            "@qa:phpmd:codesize",
+            "@qa:phpmd:controversial",
+            "@qa:phpmd:design",
+            "@qa:phpmd:unusedcode"
+        ],
+        "regenerate-test-db": [
+            "@php bin/console doctrine:database:drop --if-exists --force --env=test --no-interaction",
+            "@php bin/console doctrine:database:create --if-not-exists --env=test --no-interaction",
+            "@php bin/console doctrine:migrations:migrate --env=test --no-interaction"
+        ],
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "7.4.*"
+        }
+    }
+}

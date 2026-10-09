@@ -1,0 +1,15 @@
+services:
+  proxy:
+    volumes:
+      - ./docker/proxy/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ${PROJECT_NAME:-base_project}-mailpit
+    command: ["--webroot", "/mailpit"]
+    networks:
+      - app
+
+  php:
+    environment:
+      MAILER_DSN: ${MAILER_DSN:-smtp://mailpit:1025}

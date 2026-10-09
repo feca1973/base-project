@@ -1,0 +1,223 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Entity;
+
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: 'users')]
+#[ORM\UniqueConstraint(name: 'uniq_users_email', columns: ['email'])]
+#[ORM\UniqueConstraint(name: 'uniq_users_source_wp_id', columns: ['source_wp_id'])]
+#[ORM\Index(name: 'idx_users_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_users_source_wp_login', columns: ['source_wp_login'])]
+class User implements UserInterface
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: Types::BIGINT, options: ['unsigned' => true])]
+    private ?int $id = null;
+
+    #[ORM\Column(length: 180)]
+    private string $email = '';
+
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $displayName = null;
+
+    /**
+     * @var list<string>
+     */
+    #[ORM\Column(type: Types::JSON)]
+    private array $roles = [];
+
+    #[ORM\Column(options: ['default' => true])]
+    private bool $isActive = true;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $lastLoginAt = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $sourceWpId = null;
+
+    #[ORM\Column(length: 180, nullable: true)]
+    private ?string $sourceWpLogin = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $sourceWpRegisteredAt = null;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
+    private int $createdAt = 0;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
+    private int $updatedAt = 0;
+
+    /**
+     * @var Collection<int, MagicLoginToken>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: MagicLoginToken::class, orphanRemoval: true)]
+    private Collection $magicLoginTokens;
+
+    public function __construct()
+    {
+        $this->magicLoginTokens = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = strtolower(trim($email));
+
+        return $this;
+    }
+
+    public function getDisplayName(): ?string
+    {
+        return $this->displayName;
+    }
+
+    public function setDisplayName(?string $displayName): self
+    {
+        $displayName = $displayName === null ? null : trim($displayName);
+        $this->displayName = $displayName === '' ? null : $displayName;
+
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER';
+
+        return array_values(array_unique($roles));
+    }
+
+    /**
+     * @param list<string> $roles
+     */
+    public function setRoles(array $roles): self
+    {
+        $this->roles = array_values(array_unique($roles));
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getLastLoginAt(): ?int
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?int $lastLoginAt): self
+    {
+        $this->lastLoginAt = $lastLoginAt;
+
+        return $this;
+    }
+
+    public function getSourceWpId(): ?int
+    {
+        return $this->sourceWpId;
+    }
+
+    public function setSourceWpId(?int $sourceWpId): self
+    {
+        $this->sourceWpId = $sourceWpId;
+
+        return $this;
+    }
+
+    public function getSourceWpLogin(): ?string
+    {
+        return $this->sourceWpLogin;
+    }
+
+    public function setSourceWpLogin(?string $sourceWpLogin): self
+    {
+        $sourceWpLogin = $sourceWpLogin === null ? null : trim($sourceWpLogin);
+        $this->sourceWpLogin = $sourceWpLogin === '' ? null : $sourceWpLogin;
+
+        return $this;
+    }
+
+    public function getSourceWpRegisteredAt(): ?int
+    {
+        return $this->sourceWpRegisteredAt;
+    }
+
+    public function setSourceWpRegisteredAt(?int $sourceWpRegisteredAt): self
+    {
+        $this->sourceWpRegisteredAt = $sourceWpRegisteredAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): int
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(int $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): int
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(int $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+    /**
+     * @return Collection<int, MagicLoginToken>
+     */
+    public function getMagicLoginTokens(): Collection
+    {
+        return $this->magicLoginTokens;
+    }
+}

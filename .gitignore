@@ -1,0 +1,58 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Environment files and local secrets
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!.env.production.example
+!.env.dist
+!.env.*.dist
+!**/.env.example
+!**/.env.production.example
+!**/.env.dist
+!**/.env.*.dist
+backend/symfony/config/jwt/*.pem
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node/Nuxt
+node_modules/
+**/node_modules/
+.nuxt/
+.output/
+dist/
+coverage/
+frontend/nuxt/.nuxt/
+frontend/nuxt/.output/
+frontend/nuxt/dist/
+frontend/nuxt/coverage/
+admin/nuxt/.nuxt/
+admin/nuxt/.output/
+admin/nuxt/dist/
+admin/nuxt/coverage/
+
+# PHP/Symfony
+backend/symfony/vendor/
+backend/symfony/var/*
+!backend/symfony/var/.gitignore
+backend/symfony/.phpunit.cache/
+backend/symfony/coverage/
+backend/symfony/public/bundles/
+backend/symfony/public/uploads/
+backend/symfony/config/reference.php
+composer.phar
+
+# Local Docker/runtime data
+mysql_data/
+es_data/

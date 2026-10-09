@@ -1,0 +1,10 @@
+nuxt/.env
+nuxt/.env.*
+!nuxt/.env.example
+!nuxt/.env.dist
+!nuxt/.env.*.dist
+nuxt/node_modules/
+nuxt/.nuxt/
+nuxt/.output/
+nuxt/dist/
+nuxt/coverage/
