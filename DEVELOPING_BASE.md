@@ -24,8 +24,8 @@ ez alapján kell eldönteni, milyen további dokumentumokat kell megnyitni.
 
 ## Projektstruktúra
 
-- `frontend/nuxt`: publikus Nuxt frontend.
-- `admin/nuxt`: Nuxt admin felület.
+- `frontend/nuxt`: publikus Nuxt 3 frontend (SSR).
+- `admin/nuxt`: Nuxt 3 admin felület (SPA, `/admin` baseURL).
 - `backend/symfony`: Symfony backend és API.
 - `docker/proxy`: nginx belépési pont.
 - `mysql/mysql-init`: MySQL inicializálási hookok. Alapból nincs séma vagy
@@ -81,6 +81,7 @@ Meglévő, nem a feladathoz tartozó módosítást nem szabad visszavonni.
 - Teljes Docker stacket csak akkor szabad indítani, ha a feladat ezt
   kifejezetten kéri, vagy a működés ellenőrzéséhez szükséges.
 - Alap compose ellenőrzéshez használható: `docker compose config --quiet`.
+- Lokális telepítés és indítás belépési pontja: `./install.sh`.
 - A lokális dev compose a Dockerfile-ok `dev` targetjeit használja.
 - A production compose a Dockerfile-ok `production` targetjeit használja.
 - A compose gateway modellben a Symfony PHP-FPM service neve `php`, a Symfony

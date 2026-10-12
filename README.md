@@ -2,19 +2,18 @@
 
 Dockerizált alap projektváz:
 
-- Nuxt publikus frontend
-- Nuxt admin felület
-- Symfony backend API
+- Nuxt 3 publikus frontend (SSR)
+- Nuxt 3 admin felület (SPA, `/admin` alatt)
+- Symfony 7.4 backend API
 - Docker Compose alapú infrastruktúra saját nginx proxyval
-
-A projekt gyökere a repositoryn belül: `site/`.
 
 Nuxt projektkönyvtárak:
 
 - `frontend/nuxt`: publikus Nuxt frontend projekt.
 - `admin/nuxt`: Nuxt admin projekt.
 
-Mindkét Nuxt projektben a belső `app/` könyvtár a Nuxt 4 forráskönyvtára.
+Mindkét Nuxt projekt a Nuxt 3 alap könyvtárszerkezetét használja
+(`app.vue`, `pages/`, `assets/` közvetlenül a projekt gyökerében).
 
 ## Szolgáltatások
 
@@ -31,17 +30,63 @@ Mindkét Nuxt projektben a belső `app/` könyvtár a Nuxt 4 forráskönyvtára.
 
 Nincs külön cron vagy Symfony Messenger worker konténer.
 
-## Lokális dev indítás
+## Lokális dev környezet
+
+Előfeltétel: Docker (compose pluginnal) és curl. Minden más (PHP, Composer,
+Node) konténerben fut.
+
+A dev mód az alapértelmezett: a `docker compose` automatikusan betölti a
+`docker-compose.yml` és a `docker-compose.override.yml` fájlt. Utóbbi adja
+hozzá a Mailpitet és a dev proxy konfigurációt. A forráskód bind mounttal van
+a konténerekben, így a változások azonnal látszanak (hot reload).
+
+### Telepítés (első alkalommal)
+
+A repository gyökeréből:
 
 ```bash
-cd site
-cp .env.example .env
-docker compose config --quiet
-docker compose run --rm --no-deps php composer install
-docker compose up -d --build
+./install.sh [projekt_nev]
 ```
 
-Dev URL-ek:
+A projektnév alapértelmezése a mappa neve. Ebből lesznek a konténernevek, a
+compose projektnév és az adatbázis neve.
+
+Az installer:
+
+1. Ha még nincs root `.env`, létrehozza a `.env.example` alapján: projektnév,
+   véletlen `APP_SECRET` és MySQL jelszavak, szabad host portok
+   (`local-port-finder.sh`). Meglévő `.env`-et nem ír felül.
+2. Buildeli az image-eket, és lefuttatja a `composer install`-t.
+3. Elindítja a konténereket, és megvárja, hogy fussanak.
+4. Lefuttatja a Doctrine migrationöket. Friss telepítésnél ez létrehozza a
+   `users` és `magic_login_tokens` táblát és az `admin@nexcode.hu` super admin
+   usert.
+5. Megvárja, hogy az API, a frontend, az admin és a Mailpit válaszoljon.
+
+Az első futás pár percig tart. Az installer újrafuttatható.
+
+### Indítás és leállítás (telepítés után)
+
+Indítás:
+
+```bash
+docker compose up -d
+```
+
+A két Nuxt konténer minden induláskor `npm ci`-t futtat, ezért indítás után
+kell nekik egy kis idő. Addig a frontend és az admin 502-es hibát adhat.
+Követés: `docker compose logs -f frontend admin`.
+
+Leállítás:
+
+```bash
+docker compose down
+```
+
+### Dev URL-ek
+
+A port az installer kimenetében és a root `.env` `HTTP_PORT` értékében
+látszik (ha szabad, 8080):
 
 - Frontend: `http://localhost:8080/`
 - Backend API: `http://localhost:8080/api/`
@@ -50,21 +95,24 @@ Dev URL-ek:
 - Mailpit: `http://localhost:8080/mailpit/`
 - phpMyAdmin: `http://localhost:8081/`
 
-Hasznos parancsok:
+### Hasznos parancsok
 
 ```bash
+docker compose ps
 docker compose logs -f
 docker compose logs -f php
 docker compose logs -f frontend
 docker compose logs -f admin
-docker compose down
 ```
 
-Teljes lokális adat törlése csak akkor, ha az adatbázis/volume tartalom is
-törölhető:
+### Teljes újratelepítés
+
+Csak akkor, ha az adatbázis és a volume-ok tartalma is törölhető:
 
 ```bash
 docker compose down -v
+rm .env
+./install.sh
 ```
 
 ## Production indítási modell
@@ -72,7 +120,6 @@ docker compose down -v
 A production compose önálló fájl:
 
 ```bash
-cd site
 cp .env.production.example .env.production
 docker compose --env-file .env.production -f docker-compose.prod.yml config --quiet
 docker compose --env-file .env.production -f docker-compose.prod.yml up -d --build
@@ -96,14 +143,17 @@ docker compose --env-file .env.production -f docker-compose.prod.yml --profile t
 
 ## Adatbázis
 
-Az adatbázis induláskor üres. A MySQL a `.env` vagy `.env.production` alapján
-hozza létre:
+A MySQL a `.env` vagy `.env.production` alapján hozza létre az adatbázist és
+az adatbázis usert. Az `install.sh` a projektnévből képzi a nevüket, a
+`.env.example` alapértéke `base_project` / `base_project_user`.
 
-- adatbázis: `base_project`
-- user: `base_project_user`
+A sémát a Doctrine migrationök építik fel (`backend/symfony/migrations/`).
+A kezdő migration létrehozza:
 
-Az új adatmodell és a Symfony migrationök
-tervezési lépésben készülnek el.
+- a `users` és a `magic_login_tokens` táblát,
+- az `admin@nexcode.hu` usert `ROLE_SUPER_ADMIN` szerepkörrel. Jelszó mezője
+  nincs: a magic linkes belépéshez a `MagicLoginToken` entitás megvan, de maga
+  a belépési folyamat még nincs megvalósítva.
 
 ## Backend
 

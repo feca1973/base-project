@@ -17,6 +17,9 @@ Thumbs.db
 !**/.env.production.example
 !**/.env.dist
 !**/.env.*.dist
+# Symfony convention: committed defaults without secrets (real values come from docker-compose)
+!backend/symfony/.env
+!backend/symfony/.env.test
 backend/symfony/config/jwt/*.pem
 
 # Logs

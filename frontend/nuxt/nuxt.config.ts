@@ -11,8 +11,10 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
+    // SSR-side /api calls run inside the container, where localhost is not the proxy;
+    // docker-compose points this at the backend service (http://backend:80).
     '/api/**': {
-      proxy: 'http://localhost:8080/api/**'
+      proxy: `${process.env.NUXT_INTERNAL_API_BASE_URL || 'http://localhost:8080'}/api/**`
     }
   },
   vite: {

@@ -23,6 +23,7 @@ services:
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
       NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL}
+      NUXT_INTERNAL_API_BASE_URL: http://backend:80
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./frontend/nuxt:/app
@@ -41,6 +42,7 @@ services:
       NUXT_PORT: 3000
       NUXT_APP_BASE_URL: ${NUXT_ADMIN_BASE_URL:-/admin/}
       NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL}
+      NUXT_INTERNAL_API_BASE_URL: http://backend:80
       CHOKIDAR_USEPOLLING: "true"
     volumes:
       - ./admin/nuxt:/app
@@ -107,10 +109,13 @@ services:
       - mysql_data:/var/lib/mysql
       - ./mysql/mysql-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --port=${MYSQL_INTERNAL_PORT} --silent"]
+      # TCP (127.0.0.1), nem socket: első induláskor a MySQL egy csak socketen figyelő
+      # ideiglenes szervert futtat, amire a "localhost" ping már sikeres lenne.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --port=${MYSQL_INTERNAL_PORT} --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 60s
     networks:
       - app
 

@@ -99,10 +99,13 @@ services:
       - mysql_data:/var/lib/mysql
       - ./mysql/mysql-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --port=${MYSQL_INTERNAL_PORT} --silent"]
+      # TCP (127.0.0.1), nem socket: első induláskor a MySQL egy csak socketen figyelő
+      # ideiglenes szervert futtat, amire a "localhost" ping már sikeres lenne.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --port=${MYSQL_INTERNAL_PORT} --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 60s
     networks:
       - app
 

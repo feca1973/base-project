@@ -6,7 +6,10 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     container_name: ${PROJECT_NAME:-base_project}-mailpit
-    command: ["--webroot", "/mailpit"]
+    environment:
+      # Env var instead of the --webroot flag: the image's built-in healthcheck
+      # (/mailpit readyz) reads it too, otherwise it probes /readyz and stays unhealthy.
+      MP_WEBROOT: /mailpit
     networks:
       - app
 

@@ -50,7 +50,11 @@ ENV APP_ENV=prod \
 
 COPY --from=vendor /var/www/html /var/www/html
 
+# symfony/runtime reads a .env file at boot and throws if it is missing. The real file
+# is docker-ignored (it may hold local dev values), so create an empty one: every
+# value in production comes from the container environment (docker-compose).
 RUN mkdir -p var/cache var/log \
+    && touch .env \
     && chown -R www-data:www-data var
 
 CMD ["php-fpm"]

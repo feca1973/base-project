@@ -107,4 +107,7 @@ throw new InvalidArgumentException('...');
 
 ## 4. Kommunikáció
 
-- A fejlesztés során a válaszok mindig magyarul legyenek.
+- A fejlesztés során minden kommunikáció magyar nyelven történik: a válaszok,
+  a köztes állapotjelentések, a kérdések és az összefoglalók is.
+- Akkor is magyarul kell válaszolni, ha a kérdés, a kód vagy egy eszköz
+  kimenete más nyelvű.

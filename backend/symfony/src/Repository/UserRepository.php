@@ -28,11 +28,6 @@ final class UserRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function findOneBySourceWpId(int $sourceWpId): ?User
-    {
-        return $this->findOneBy(['sourceWpId' => $sourceWpId]);
-    }
-
     /**
      * @return list<User>
      */

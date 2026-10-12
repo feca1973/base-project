@@ -1,6 +1,9 @@
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
+  // The admin panel is authenticated and behind a non-root baseURL; SPA mode keeps the
+  // client fetches to /api/** simple (same-origin via nginx).
+  ssr: false,
   app: {
     baseURL: process.env.NUXT_APP_BASE_URL || '/'
   },
@@ -14,7 +17,7 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/api/**': {
-      proxy: 'http://localhost:8080/api/**'
+      proxy: `${process.env.NUXT_INTERNAL_API_BASE_URL || 'http://localhost:8080'}/api/**`
     }
   },
   vite: {

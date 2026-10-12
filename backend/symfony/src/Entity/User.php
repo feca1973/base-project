@@ -14,9 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'uniq_users_email', columns: ['email'])]
-#[ORM\UniqueConstraint(name: 'uniq_users_source_wp_id', columns: ['source_wp_id'])]
 #[ORM\Index(name: 'idx_users_created_at', columns: ['created_at'])]
-#[ORM\Index(name: 'idx_users_source_wp_login', columns: ['source_wp_login'])]
 class User implements UserInterface
 {
     #[ORM\Id]
@@ -41,15 +39,6 @@ class User implements UserInterface
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
     private ?int $lastLoginAt = null;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
-    private ?int $sourceWpId = null;
-
-    #[ORM\Column(length: 180, nullable: true)]
-    private ?string $sourceWpLogin = null;
-
-    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
-    private ?int $sourceWpRegisteredAt = null;
 
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
     private int $createdAt = 0;
@@ -144,43 +133,6 @@ class User implements UserInterface
     public function setLastLoginAt(?int $lastLoginAt): self
     {
         $this->lastLoginAt = $lastLoginAt;
-
-        return $this;
-    }
-
-    public function getSourceWpId(): ?int
-    {
-        return $this->sourceWpId;
-    }
-
-    public function setSourceWpId(?int $sourceWpId): self
-    {
-        $this->sourceWpId = $sourceWpId;
-
-        return $this;
-    }
-
-    public function getSourceWpLogin(): ?string
-    {
-        return $this->sourceWpLogin;
-    }
-
-    public function setSourceWpLogin(?string $sourceWpLogin): self
-    {
-        $sourceWpLogin = $sourceWpLogin === null ? null : trim($sourceWpLogin);
-        $this->sourceWpLogin = $sourceWpLogin === '' ? null : $sourceWpLogin;
-
-        return $this;
-    }
-
-    public function getSourceWpRegisteredAt(): ?int
-    {
-        return $this->sourceWpRegisteredAt;
-    }
-
-    public function setSourceWpRegisteredAt(?int $sourceWpRegisteredAt): self
-    {
-        $this->sourceWpRegisteredAt = $sourceWpRegisteredAt;
 
         return $this;
     }
