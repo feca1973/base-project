@@ -38,6 +38,12 @@ class User implements UserInterface
     private bool $isActive = true;
 
     #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $termsAcceptedAt = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
+    private ?int $emailVerifiedAt = null;
+
+    #[ORM\Column(type: Types::INTEGER, nullable: true, options: ['unsigned' => true])]
     private ?int $lastLoginAt = null;
 
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
@@ -116,6 +122,30 @@ class User implements UserInterface
     public function isActive(): bool
     {
         return $this->isActive;
+    }
+
+    public function getTermsAcceptedAt(): ?int
+    {
+        return $this->termsAcceptedAt;
+    }
+
+    public function setTermsAcceptedAt(?int $termsAcceptedAt): self
+    {
+        $this->termsAcceptedAt = $termsAcceptedAt;
+
+        return $this;
+    }
+
+    public function getEmailVerifiedAt(): ?int
+    {
+        return $this->emailVerifiedAt;
+    }
+
+    public function setEmailVerifiedAt(?int $emailVerifiedAt): self
+    {
+        $this->emailVerifiedAt = $emailVerifiedAt;
+
+        return $this;
     }
 
     public function setIsActive(bool $isActive): self

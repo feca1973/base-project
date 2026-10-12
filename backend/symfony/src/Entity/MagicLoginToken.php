@@ -28,6 +28,9 @@ class MagicLoginToken
     #[ORM\Column(length: 128)]
     private string $tokenHash = '';
 
+    #[ORM\Column(length: 24, options: ['default' => 'login'])]
+    private string $purpose = 'login';
+
     #[ORM\Column(type: Types::INTEGER, options: ['unsigned' => true])]
     private int $expiresAt = 0;
 
@@ -63,6 +66,18 @@ class MagicLoginToken
     public function getTokenHash(): string
     {
         return $this->tokenHash;
+    }
+
+    public function getPurpose(): string
+    {
+        return $this->purpose;
+    }
+
+    public function setPurpose(string $purpose): self
+    {
+        $this->purpose = $purpose;
+
+        return $this;
     }
 
     public function setTokenHash(string $tokenHash): self
