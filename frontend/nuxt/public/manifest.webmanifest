@@ -1,0 +1,14 @@
+{
+  "name": "Base Project",
+  "short_name": "Base Project",
+  "description": "Emailes jóváhagyással működő belépés.",
+  "lang": "hu",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f5ef",
+  "theme_color": "#f4f5ef",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

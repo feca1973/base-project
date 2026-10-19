@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="hu">
+<head><meta charset="UTF-8"><title>{{ action|capitalize }}</title></head>
+<body style="font-family:Arial,sans-serif;color:#172033;line-height:1.6">
+    <h1>Szia, {{ name }}!</h1>
+    <p>A folytatáshoz kattints az alábbi gombra:</p>
+    <p><a href="{{ link }}" style="display:inline-block;padding:12px 20px;background:#205640;color:#fff;text-decoration:none;border-radius:6px">{{ action|capitalize }}</a></p>
+    <p>A link {{ minutes }} percig érvényes, és csak egyszer használható.</p>
+    <p>Ha nem te kérted ezt az emailt, hagyd figyelmen kívül.</p>
+</body>
+</html>
